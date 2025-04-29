@@ -10,10 +10,14 @@
 #include <opencv2/opencv.hpp>
 #include <opencv2/core/eigen.hpp>
 
-void myCalcOpticalFlowLK(cv::Mat image1, cv::Mat image2,
-                        std::vector<cv::Point2f> &prev_kp, std::vector<cv::Point2f> &next_kp,
-                        std::vector<uchar> &status, bool use_magic_operation=false, int patch_size=21, int iteration=10, 
-                        bool do_prediction=false);
+void myCalcOpticalFlowLK(cv::Mat image1,
+                         cv::Mat image2,
+                         std::vector<cv::Point2f>& prev_kp,
+                         std::vector<cv::Point2f>& next_kp,
+                         std::vector<uint32_t>& status,
+                         int patch_size = 21,
+                         int iteration = 10,
+                         bool do_prediction = false);
 
 void myCalcOpticalFlowPyrLK(cv::Mat image1, cv::Mat image2,
                             std::vector<cv::Point2f> &prev_kp, std::vector<cv::Point2f> &next_kp,
