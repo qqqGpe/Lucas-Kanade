@@ -1,3 +1,36 @@
+## Build
+
+### Configure & build
+
+```bash
+git clone <repo-url> Lucas-Kanade
+cd Lucas-Kanade
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build -j$(nproc)
+```
+
+The executable is placed at `build/myKLT`.
+
+### Run
+
+The program reads frames from `data/associate.txt`. With the dataset already in
+`data/`, just run:
+
+```bash
+./build/myKLT
+```
+
+A window pops up showing the tracked keypoints; press any key to advance to the
+next frame.
+
+### Notes
+
+- `CMAKE_BUILD_TYPE` defaults to `Release` in `CMakeLists.txt`. Switch to
+  `Debug` for symbol info and Eigen bounds-checking when debugging.
+- The build defines `EIGEN_DEFAULT_TO_ROW_MAJOR` so `Eigen::MatrixXd` aligns
+  with `cv::Mat` row-major storage. Keep this in mind when interfacing with
+  third-party libraries that assume column-major Eigen matrices.
+
 ## Forward compositional running performance
 ```bash
 frame 1: tracked 154/170 keypointscost time: 0.156237 seconds.
