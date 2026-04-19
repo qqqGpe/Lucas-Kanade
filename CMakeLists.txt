@@ -1,17 +1,16 @@
-cmake_minimum_required( VERSION 3.0 )
+cmake_minimum_required( VERSION 3.15 )
 project(myKLT)
 
-# set(CMAKE_BUILD_TYPE Debug)
-if(NOT CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE Release)
-endif()
-if (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-    # Release 模式下最大优化选项
-    set(CMAKE_CXX_FLAGS_RELEASE "-O3 -march=native -funroll-loops")
-endif()
+set(CMAKE_BUILD_TYPE Release)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 find_package(Eigen3 REQUIRED)
 find_package(OpenCV REQUIRED)
+
+# Make Eigen's default Matrix storage order row-major so gradient maps and other
+# OpenCV-sourced matrices line up with cv::Mat without an explicit transpose.
+add_compile_definitions(EIGEN_DEFAULT_TO_ROW_MAJOR)
+
 include_directories(${OpenCV_INCLUDE_DIRS})
 include_directories(${EIGEN3_INCLUDE_DIRS})
 include_directories(${PROJECT_SOURCE_DIR}/src)

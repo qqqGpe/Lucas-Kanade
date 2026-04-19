@@ -1,0 +1,30 @@
+#include "klt.h"
+
+class KltForwardCompositionTracker : public KltTracker
+{
+public:
+    KltForwardCompositionTracker() = default;
+    ~KltForwardCompositionTracker() override = default;
+
+    bool performTracking(const cv::Mat &image_ref, const cv::Mat &image_cur, const Eigen::MatrixXd &gradient_x, const Eigen::MatrixXd &gradient_y,
+                         const std::vector<cv::Point2d> &prev_kp, std::vector<cv::Point2d> &next_kp, std::vector<uint8_t> &status) override;
+
+    bool performPyramidTracking(const cv::Mat &image_ref, const cv::Mat &image_cur, const std::vector<cv::Point2d> &prev_kp,
+                                std::vector<cv::Point2d> &next_kp, std::vector<uint8_t> &status) override;
+
+private:
+    void Compute_dW_dp(const Eigen::Vector2d &uv, const Eigen::VectorXd &p, Eigen::MatrixXd &dW_dp);
+
+    void UpdateWarpParameter(Eigen::VectorXd &p, Eigen::VectorXd &dp);
+
+    void InitializeWarpParameters(const Eigen::Vector2d &prev_p, const Eigen::Vector2d &cur_p, Eigen::VectorXd &p);
+
+    void WarpSinglePoint(const Eigen::Vector2d &point, const Eigen::VectorXd &warp_p, Eigen::Vector2d &warped_point);
+
+    constexpr static double kStopThreshold = 1e-3;
+
+    std::vector<cv::Mat> image_ref_pyramid_;
+    std::vector<cv::Mat> image_cur_pyramid_;
+    std::vector<Eigen::MatrixXd> preGradient_x_pyramid_;
+    std::vector<Eigen::MatrixXd> preGradient_y_pyramid_;
+};
