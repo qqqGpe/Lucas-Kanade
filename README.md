@@ -33,6 +33,7 @@ next frame.
 
 ## Forward compositional running performance
 ```bash
+# running with pyramid of 3 level
 frame 1: tracked 154/170 keypointscost time: 0.156237 seconds.
 frame 2: tracked 154/170 keypointscost time: 0.161494 seconds.
 frame 3: tracked 149/170 keypointscost time: 0.159733 seconds.
