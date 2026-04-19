@@ -56,7 +56,7 @@ int main(int argc, char **argv)
 
             const size_t n_tracked = std::count_if(status.begin(), status.end(), [](uint8_t s) { return s != 0; });
             std::cout << "frame " << index << ": tracked " << n_tracked << "/" << prev_keypoints.size() << " keypoints"
-                      << "cost time: " << time_used.count() << " seconds." << std::endl;
+                      << ", cost time: " << time_used.count() << " seconds." << std::endl;
 
             // Show the optical flow
             cv::Mat image_to_show = curr_color_image.clone();
