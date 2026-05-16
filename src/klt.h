@@ -47,6 +47,12 @@ protected:
         return rowIndex > 0 && rowIndex < image.rows - step && colIndex > 0 && colIndex < image.cols - step;
     }
 
+    virtual void Compute_dW_dp(const Eigen::Vector2d &uv, const Eigen::VectorXd &p, Eigen::MatrixXd &dW_dp) = 0;
+
+    virtual void UpdateWarpParameter(Eigen::VectorXd &p, Eigen::VectorXd &dp) = 0;
+
+    virtual void WarpSinglePoint(const Eigen::Vector2d &point, const Eigen::VectorXd &warp_p, Eigen::Vector2d &warped_point) = 0;
+
     double BilinearInterpolation(cv::Mat &mat, const double row, const double col)
     {
         int row_floor = std::floor(row);

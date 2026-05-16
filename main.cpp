@@ -1,5 +1,6 @@
 #include "src/klt.h"
 #include "src/klt_forward.h"
+#include "src/klt_inverse.h"
 #include <algorithm>
 #include <chrono>
 #include <fstream>
@@ -25,8 +26,10 @@ int main(int argc, char **argv)
     cv::Mat prev_gray_image, curr_gray_image;
 
     KltForwardCompositionTracker klt_forward_tracker;
+    KltInverseCompositionTracker klt_inverse_tracker;
     KltTrackerConfig klt_config{.patch_size = 21, .n_max_iteration = 10, .max_pyramid_level = 3};
     klt_forward_tracker.setConfig(klt_config);
+    klt_inverse_tracker.setConfig(klt_config);
 
     for (int index = 0; index < 9; index++)
     {
@@ -49,7 +52,8 @@ int main(int argc, char **argv)
             std::vector<uint8_t> status;
             std::vector<float> error;
             std::chrono::steady_clock::time_point t1 = std::chrono::steady_clock::now();
-            klt_forward_tracker.performPyramidTracking(prev_gray_image, curr_gray_image, prev_keypoints, curr_keypoints, status);
+            // klt_forward_tracker.performPyramidTracking(prev_gray_image, curr_gray_image, prev_keypoints, curr_keypoints, status);
+            klt_inverse_tracker.performPyramidTracking(prev_gray_image, curr_gray_image, prev_keypoints, curr_keypoints, status);
 
             std::chrono::steady_clock::time_point t2 = std::chrono::steady_clock::now();
             std::chrono::duration<double> time_used = std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1);

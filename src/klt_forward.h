@@ -13,15 +13,15 @@ public:
                                 std::vector<cv::Point2d> &next_kp, std::vector<uint8_t> &status) override;
 
 private:
-    void Compute_dW_dp(const Eigen::Vector2d &uv, const Eigen::VectorXd &p, Eigen::MatrixXd &dW_dp);
+    constexpr static double kStopThreshold = 1e-3;
 
-    void UpdateWarpParameter(Eigen::VectorXd &p, Eigen::VectorXd &dp);
+    virtual void Compute_dW_dp(const Eigen::Vector2d &uv, const Eigen::VectorXd &p, Eigen::MatrixXd &dW_dp) override;
+
+    virtual void UpdateWarpParameter(Eigen::VectorXd &p, Eigen::VectorXd &dp) override;
+
+    virtual void WarpSinglePoint(const Eigen::Vector2d &point, const Eigen::VectorXd &warp_p, Eigen::Vector2d &warped_point) override;
 
     void InitializeWarpParameters(const Eigen::Vector2d &prev_p, const Eigen::Vector2d &cur_p, Eigen::VectorXd &p);
-
-    void WarpSinglePoint(const Eigen::Vector2d &point, const Eigen::VectorXd &warp_p, Eigen::Vector2d &warped_point);
-
-    constexpr static double kStopThreshold = 1e-3;
 
     std::vector<cv::Mat> image_ref_pyramid_;
     std::vector<cv::Mat> image_cur_pyramid_;
