@@ -19,3 +19,4 @@ add_subdirectory(${PROJECT_SOURCE_DIR}/src)
 
 add_executable(myKLT main.cpp)
 target_link_libraries(myKLT klt_lib)
+target_compile_definitions(myKLT PRIVATE PROJECT_DIR="${PROJECT_SOURCE_DIR}")

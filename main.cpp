@@ -5,10 +5,23 @@
 #include <chrono>
 #include <fstream>
 #include <iostream>
+#include <memory>
+
+#define USE_INVERSE_COMPOSITION_TRACKER // Comment out to use forward compositional tracker instead
+
+namespace
+{
+constexpr int kMaxHarrisCorners = 200;
+constexpr double kHarrisQualityLevel = 0.01;
+constexpr double kHarrisMinDistance = 20;
+constexpr int kKltPatchSize = 21;
+constexpr int kKltMaxPyramidLevel = 3;
+constexpr int kKltMaxIteration = 10;
+} // namespace
 
 int main(int argc, char **argv)
 {
-    std::string path_to_dataset = "/home/gao/ws/Lucas-Kanade/data";
+    std::string path_to_dataset = std::string(PROJECT_DIR) + "/data";
     std::string associate_file = path_to_dataset + "/associate.txt";
     std::cout << "associate file is: " << associate_file << std::endl;
 
@@ -25,11 +38,17 @@ int main(int argc, char **argv)
     cv::Mat prev_color_image, curr_color_image;
     cv::Mat prev_gray_image, curr_gray_image;
 
-    KltForwardCompositionTracker klt_forward_tracker;
-    KltInverseCompositionTracker klt_inverse_tracker;
-    KltTrackerConfig klt_config{.patch_size = 21, .n_max_iteration = 10, .max_pyramid_level = 3};
-    klt_forward_tracker.setConfig(klt_config);
-    klt_inverse_tracker.setConfig(klt_config);
+#ifdef USE_INVERSE_COMPOSITION_TRACKER
+    std::unique_ptr<KltTracker> tracker = std::make_unique<KltInverseCompositionTracker>();
+#else
+    std::unique_ptr<KltTracker> tracker = std::make_unique<KltForwardCompositionTracker>();
+#endif
+    KltTrackerConfig klt_config{
+        .patch_size = kKltPatchSize,
+        .n_max_iteration = kKltMaxIteration,
+        .max_pyramid_level = kKltMaxPyramidLevel
+    };
+    tracker->setConfig(klt_config);
 
     for (int index = 0; index < 9; index++)
     {
@@ -40,10 +59,7 @@ int main(int argc, char **argv)
         if (index == 0)
         {
             std::vector<cv::Point2d> corners;
-            int maxCorners = 200;
-            double qualityLevel = 0.01;
-            double minDistance = 20;
-            cv::goodFeaturesToTrack(curr_gray_image, corners, maxCorners, qualityLevel, minDistance);
+            cv::goodFeaturesToTrack(curr_gray_image, corners, kMaxHarrisCorners, kHarrisQualityLevel, kHarrisMinDistance);
             prev_keypoints = corners;
             curr_keypoints = corners;
         }
@@ -52,8 +68,8 @@ int main(int argc, char **argv)
             std::vector<uint8_t> status;
             std::vector<float> error;
             std::chrono::steady_clock::time_point t1 = std::chrono::steady_clock::now();
-            // klt_forward_tracker.performPyramidTracking(prev_gray_image, curr_gray_image, prev_keypoints, curr_keypoints, status);
-            klt_inverse_tracker.performPyramidTracking(prev_gray_image, curr_gray_image, prev_keypoints, curr_keypoints, status);
+
+            tracker->performPyramidTracking(prev_gray_image, curr_gray_image, prev_keypoints, curr_keypoints, status);
 
             std::chrono::steady_clock::time_point t2 = std::chrono::steady_clock::now();
             std::chrono::duration<double> time_used = std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1);
